@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  wta:
+    image: ${DOCKER_REGISTRY-}wta
+    build:
+      context: .
+      dockerfile: src/Wta/Dockerfile
+    depends_on:
+      - mysql

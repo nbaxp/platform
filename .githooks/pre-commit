@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# 去除所有本地化的设置
+LC_ALL=C
+
+# 失败立即退出
+set -eo pipefail
+
+# 检查是否有文件更改
+if [ -z "$(git status --porcelain)" ]; then
+  echo "没有文件更改，不需要提交。"
+  exit 0
+fi

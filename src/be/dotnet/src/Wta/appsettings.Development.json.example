@@ -1,0 +1,53 @@
+{
+  "EncryptionKey": "0123456789abcdef0123456789abcdef",
+  "CaptchaTimeout": "00:05:00",
+  "Jwt": {
+    "AccessTokenExpires": "00:3:00",
+    "RefreshTokenExpires": "00:30:00",
+    "MaxFailedAccessAttempts": 3,
+    "DefaultLockout": "00:01:00"
+  },
+  //"Email": {
+  //  "Host": "smtp.ym.163.com",
+  //  "Port": 994,
+  //  "EnableSsl": true,
+  //  "UserName": "admin@nbaxp.com",
+  //  "Password": "your password"
+  //},
+  "Sms": {
+    "Url": "https://api.netease.im/sms/sendcode.action",
+    "Key": "d8928bbc56c0d69cd61b9290d5813154",
+    "Secret": "b204128c31e5"
+  },
+  "AuthServer": {
+    "Url": "http://localhost:5000"
+  },
+  "DbContext": {
+    //"System": "MySql",
+    //"System": "Npgsql"
+  },
+  "ConnectionStrings": {
+    //"System": "Server=localhost;Port=3306;Database=wta;Uid=root;Pwd=aA123456!",
+    //"System": "User ID=root;Host=cockroachdb;Port=26257;Database=wta;CommandTimeout=600;"
+  },
+  //https://docs.autofac.org/en/latest/configuration/xml.html
+  "components": [
+    //{
+    //  "type": "Wta.Infrastructure.Services.DefaultTenantService,Wta.Infrastructure",
+    //  "services": [
+    //    {
+    //      "type": "Wta.Infrastructure.Interfaces.ITenantService,Wta.Infrastructure"
+    //    }
+    //  ],
+    //  "instanceScope": "per-lifetime-scope"
+    //},
+    //{
+    //  "type": "Wta.Infrastructure.Services.MinIOFileService,Wta.Infrastructure",
+    //  "services": [
+    //    {
+    //      "type": "Wta.Infrastructure.Interfaces.IFileService,Wta.Infrastructure"
+    //    }
+    //  ]
+    //}
+  ]
+}

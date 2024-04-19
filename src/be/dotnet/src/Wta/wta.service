@@ -1,0 +1,15 @@
+#/etc/systemd/system/wta.service
+#chmod 644 /etc/systemd/system/wta.service
+#systemctl enable wta.service
+
+[Unit]
+Description=Wta
+
+[Service]
+WorkingDirectory=/root/publish/wta
+ExecStart=/root/publish/wta/Wta --urls http://*:5000
+User=root
+
+[Install]
+WantedBy=multi-user.target
+

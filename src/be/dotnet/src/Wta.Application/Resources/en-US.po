@@ -1,0 +1,91 @@
+#msgid大驼峰格式，前端为小驼峰格式
+
+#验证
+msgid "Required"
+msgstr "{0}不能为空"
+
+#通用
+msgid "Application"
+msgstr "WTA Application"
+msgid "Copyright"
+msgstr "Copyright © {0}"
+
+#通用属性
+msgid "Name"
+msgstr "名称"
+msgid "Number"
+msgstr "编号"
+
+#菜单
+msgid "Home"
+msgstr "Home Page"
+msgid "Register"
+msgstr "Register"
+msgid "Login"
+msgstr "Login"
+msgid "Logout"
+msgstr "Logout"
+msgid "ForgotPassword"
+msgstr "Forgot Password"
+msgid "PasswordLogin"
+msgstr "Password Login"
+msgid "SmsLogin"
+msgstr "Sms Login"
+msgid "ExternalLogin"
+msgstr "External Login"
+msgid "UserCenter"
+msgstr "User Center"
+
+#按钮
+msgid "Confirm"
+msgstr "Confirm"
+msgid "Cancel"
+msgstr "Cancel"
+msgid "SelectAll"
+msgstr "Select All"
+msgid "InvertSelect"
+msgstr "Invert Select"
+msgid "Filter"
+msgstr "Filter"
+msgid "Reset"
+msgstr "Reset"
+msgid "Search"
+msgstr "Search"
+msgid "Details"
+msgstr "Details"
+msgid "Create"
+msgstr "Create"
+msgid "Delete"
+msgstr "Delete"
+msgid "Update"
+msgstr "Update"
+msgid "Import"
+msgstr "Import"
+msgid "Export"
+msgstr "Export"
+
+#列表
+msgid "RowNumber"
+msgstr "Row Number"
+msgid "Operations"
+msgstr "Operations"
+
+#属性
+msgid "UserName"
+msgstr "User Name"
+msgid "Password"
+msgstr "Password"
+msgid "RememberMe"
+msgstr "Remember Me"
+msgid "PhoneNumber"
+msgstr "Phone Number"
+msgid "VerifyCode"
+msgstr "Verify Code"
+
+
+#
+msgid "应用程序"
+msgstr "Application"
+
+msgid "版权所有 © {0}"
+msgstr "Copyright © {0}"

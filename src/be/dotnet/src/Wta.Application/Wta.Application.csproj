@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <None Remove="Resources\en-US.po" />
+    <None Remove="Resources\zh-CN.po" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\en-US.po" />
+    <EmbeddedResource Include="Resources\zh-CN.po" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Wta.Infrastructure\Wta.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+</Project>

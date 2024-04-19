@@ -1,0 +1,21 @@
+# temp
+*.bak
+temp/
+
+# log
+logs/
+
+# node.js
+.eslintcache
+node_modules/
+
+# java
+.gradle
+build/
+
+# dotnet
+.vs/
+[Bb]in/
+[Oo]bj/
+*.suo
+*.user

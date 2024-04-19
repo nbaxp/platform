@@ -1,0 +1,62 @@
+{
+  "name": "desktop",
+  "version": "1.0.0",
+  "private": "true",
+  "type": "module",
+  "engineStrict": true,
+  "engines": {
+    "node": "20.12.2",
+    "npm": "10.5.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "npx markdownlint-cli2 --fix '**/*.md' && eslint --cache --fix . && stylelint --fix --allow-empty-input '**/*.{css,scss,html,vue' && prettier --write --cache ."
+  },
+  "dependencies": {
+    "@microsoft/signalr": "^8.0.0",
+    "@vueuse/core": "^10.9.0",
+    "@wangeditor/editor": "^5.1.23",
+    "@wangeditor/editor-for-vue": "^5.1.12",
+    "async-validator": "^4.2.5",
+    "cherry-markdown": "^0.8.40",
+    "echarts": "^5.5.0",
+    "element-plus": "^2.6.1",
+    "html2canvas": "^1.4.1",
+    "jose": "^5.2.3",
+    "jwt-decode": "^4.0.0",
+    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
+    "nprogress": "^0.2.0",
+    "pinia": "^2.1.7",
+    "print-js": "^1.6.0",
+    "PubSub": "^4.0.0",
+    "qrcode": "^1.5.3",
+    "qs": "^6.12.0",
+    "vue": "^3.4.21",
+    "vue-echarts": "^6.6.9",
+    "vue-i18n": "^9.10.1",
+    "vue-router": "^4.3.0"
+  },
+  "devDependencies": {
+    "@iconify/json": "^2.2.191",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "@vitejs/plugin-vue-jsx": "^3.1.0",
+    "patch-package": "^8.0.0",
+    "sass": "^1.71.1",
+    "unocss": "^0.58.5",
+    "unplugin-vue-components": "^0.26.0",
+    "vite": "^5.1.5",
+    "vite-plugin-compression": "^0.5.1",
+    "vite-plugin-inspect": "^0.8.3",
+    "vite-svg-loader": "^5.1.0",
+    "markdownlint-cli2": "^0.13.0",
+    "eslint": "^9.1.0",
+    "eslint-plugin-vue": "^9.25.0",
+    "prettier": "^3.2.5",
+    "stylelint": "^16.3.1",
+    "stylelint-config-standard": "^36.0.0",
+    "stylelint-order": "^6.0.4",
+    "stylelint-prettier": "^5.0.0"
+  }
+}
