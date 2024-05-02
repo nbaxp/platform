@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "npx markdownlint-cli2 --fix '**/*.md' && eslint --cache --fix . && stylelint --fix --allow-empty-input '**/*.{css,scss,html,vue' && prettier --write --cache ."
+    "lint": "npx markdownlint-cli2 --fix '**/*.md' && eslint --fix . && stylelint --fix --allow-empty-input '**/*.{css,scss,html,vue' && prettier --write ."
   },
   "dependencies": {
     "@microsoft/signalr": "^8.0.0",

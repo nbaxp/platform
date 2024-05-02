@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { useAppStore } from '@/store/index.js'
 import { listToTree } from '@/utils/index.js'
-import { defineAsyncComponent, provide, markRaw } from 'vue'
+import { defineAsyncComponent, markRaw } from 'vue'
 
 import docs from './docs.js'
 import { afterEach, beforeEach } from './guard.js'

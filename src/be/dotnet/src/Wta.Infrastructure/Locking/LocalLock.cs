@@ -39,7 +39,7 @@ public class LocalLock : ILock, IDisposable
         }
     }
 
-    private sealed class Release(SemaphoreSlim semaphoreSlim) : IDisposable
+    private class Release(SemaphoreSlim semaphoreSlim) : IDisposable
     {
         private bool disposedValue;
 

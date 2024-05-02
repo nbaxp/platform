@@ -28,6 +28,8 @@
     <PackageReference Include="DistributedLock.Redis" />
     <PackageReference Include="DynamicExpresso.Core" />
     <PackageReference Include="EntityFramework.DynamicLinq" />
+    <PackageReference Include="Hangfire.AspNetCore" />
+    <PackageReference Include="Hangfire.MySqlStorage" />
     <PackageReference Include="MailKit" />
     <PackageReference Include="Mapster" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />

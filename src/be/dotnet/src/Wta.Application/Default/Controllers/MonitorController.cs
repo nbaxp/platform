@@ -8,10 +8,8 @@ using Monitor = Wta.Infrastructure.Monitoring.Monitor;
 
 namespace Wta.Application.Default.Controllers;
 
-[View("monitor")]
 public class MonitorController(JsonSerializerOptions jsonSerializerOptions) : BaseController, IResourceService<Monitor>
 {
-    [Ignore]
     [AllowAnonymous]
     [HttpGet]
     public async Task Index()

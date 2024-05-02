@@ -1,4 +1,4 @@
-version: '3.4'
+name: wta
 
 services:
   wta:
@@ -42,13 +42,3 @@ services:
       timeout: 10s
       retries: 10
       start_period: 10s
-  cockroachdb:
-    image: cockroachdb/cockroach:v23.1.15
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-    ports:
-     - 26257:26257
-     - 8080:8080
-    command: start-single-node --insecure
-    volumes:
-     - ./data/cockroachdb:/cockroach/cockroach-data

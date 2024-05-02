@@ -1,6 +1,10 @@
 using Autofac;
 using Autofac.Configuration;
 using Autofac.Extensions.DependencyInjection;
+using Hangfire;
+using Hangfire.MySql;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using OrchardCore.Localization;
 using Serilog;
 using Serilog.Events;
@@ -151,8 +155,7 @@ public abstract class BaseStartup : IStartup
                 {
                     var connectionStringName = dbContextType.GetCustomAttribute<ConnectionStringAttribute>()?.ConnectionString ?? dbContextType.Name.TrimEnd("DbContext");
                     var connectionString = builder.Configuration.GetConnectionString(connectionStringName) ??
-                         builder.Configuration.GetConnectionString($"Default") ??
-                         "Data Source=wta.db";
+                         builder.Configuration.GetConnectionString($"Default");
                     var dbContextProvider = builder.Configuration.GetValue<string>($"DbContext:{connectionStringName}") ??
                         builder.Configuration.GetValue<string>($"DbContext:Default") ??
                         "Sqlite";
@@ -435,7 +438,21 @@ public abstract class BaseStartup : IStartup
 
     public virtual void AddScheduler(WebApplicationBuilder builder)
     {
-        //builder.Services.AddScheduler();
+        var connectionString = builder.Configuration.GetConnectionString("hangfire");
+        var options = new MySqlStorageOptions
+        {
+            PrepareSchemaIfNecessary = true,
+        };
+        builder.Services.AddHangfire(o =>
+        {
+            o.UseStorage(new MySqlStorage(connectionString, options));
+        });
+        builder.Services.AddHangfireServer(o =>
+        {
+            o.SchedulePollingInterval = TimeSpan.FromSeconds(1);
+            o.ServerCheckInterval = TimeSpan.FromSeconds(1);
+            o.HeartbeatInterval = TimeSpan.FromSeconds(1);
+        });
     }
 
     /// <summary>
@@ -449,6 +466,7 @@ public abstract class BaseStartup : IStartup
             containerBuilder.RegisterModule(new ConfigurationModule(builder.Configuration));
         }));
     }
+
     /// <summary>
     /// 添加 SignalR
     /// </summary>
@@ -466,6 +484,7 @@ public abstract class BaseStartup : IStartup
             signalRServerBuilder.AddStackExchangeRedis(redisConnectionString);
         }
     }
+
     /// <summary>
     /// 2.配置应用程序
     /// https://learn.microsoft.com/zh-cn/aspnet/core/fundamentals/middleware/?view=aspnetcore-8.0&tabs=aspnetcore2x#middleware-order
@@ -552,24 +571,54 @@ public abstract class BaseStartup : IStartup
     /// <param name="app"></param>
     public virtual void UseDbContext(WebApplication app)
     {
+        using var scope = app.Services.CreateScope();
+        var serviceProvider = scope.ServiceProvider;
+        var dict = new Dictionary<string, List<DbContext>>();
         AppDomain.CurrentDomain.GetCustomerAssemblies()
             .SelectMany(o => o.GetTypes())
             .Where(o => !o.IsAbstract && o.GetBaseClasses().Any(t => t == typeof(DbContext)))
             .OrderBy(o => o.GetCustomAttribute<DisplayAttribute>()?.Order ?? 0)
             .ForEach(dbContextType =>
             {
-                using var scope = app.Services.CreateScope();
-                var serviceProvider = scope.ServiceProvider;
-                var contextName = dbContextType.Name;
                 if (serviceProvider.GetRequiredService(dbContextType) is DbContext dbContext)
                 {
                     if (dbContext.Database.EnsureCreated())
                     {
-                        var dbSeedType = typeof(IDbSeeder<>).MakeGenericType(dbContextType);
-                        serviceProvider.GetServices(dbSeedType).ForEach(o => dbSeedType.GetMethod(nameof(IDbSeeder<DbContext>.Seed))?.Invoke(o, [dbContext]));
+                        var creator = dbContext.GetService<IRelationalDatabaseCreator>();
+                        if (!creator.Exists())
+                        {
+                            var key = dbContext.Database.GetConnectionString()!;
+                            if (dict.TryGetValue(key, out var list))
+                            {
+                                list.Add(dbContext);
+                            }
+                            else
+                            {
+                                dict.Add(key, [dbContext]);
+                            }
+                        }
                     }
                 }
             });
+        dict.Keys.ForEach(key =>
+        {
+            var hasCreated = false;
+            dict[key].ForEach(dbContext =>
+            {
+                var creator = dbContext.GetService<IRelationalDatabaseCreator>();
+                if (!hasCreated)
+                {
+                    creator.Create();
+                }
+                creator.CreateTables();
+                var dbSeedType = typeof(IDbSeeder<>).MakeGenericType(dbContext.GetType());
+                serviceProvider.GetServices(dbSeedType).ForEach(o => dbSeedType.GetMethod(nameof(IDbSeeder<DbContext>.Seed))?.Invoke(o, [dbContext]));
+                var sql = dbContext.Database.GenerateCreateScript();
+                var file = Path.Combine(Directory.GetCurrentDirectory(), "scripts", $"{dbContext.GetType().Name}.sql");
+                Directory.CreateDirectory(Path.GetDirectoryName(file)!);
+                File.WriteAllText(file, sql);
+            });
+        });
     }
 
     /// <summary>
@@ -652,6 +701,7 @@ public abstract class BaseStartup : IStartup
 
     public virtual void UseScheduler(WebApplication webApplication)
     {
+        webApplication.UseHangfireDashboard();
         //webApplication.Services.UseScheduler(o =>
         //{
         //    webApplication.Services.GetServices<IScheduledTask>().ForEach(t =>
@@ -682,6 +732,7 @@ public abstract class BaseStartup : IStartup
         //    });
         //});
     }
+
     /// <summary>
     /// 8.配置 SignalR
     /// </summary>

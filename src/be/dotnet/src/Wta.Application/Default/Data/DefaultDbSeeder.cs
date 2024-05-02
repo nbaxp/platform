@@ -181,7 +181,7 @@ public class DefaultDbSeeder(IActionDescriptorCollectionProvider actionProvider,
                     Name = resourceType.GetDisplayName(),
                     Number = resourceType.FullName!,
                     RouterPath = resourceType.Name.ToSlugify()!,
-                    Component = "list",
+                    Component = resourceType.GetCustomAttribute<ComponentAttribute>()?.Component ?? "list",
                     Schema = $"{resourceType.Name.ToSlugify()}",
                     Order = resourceType.GetCustomAttribute<DisplayAttribute>()?.GetOrder() ?? order++
                 };
@@ -191,12 +191,7 @@ public class DefaultDbSeeder(IActionDescriptorCollectionProvider actionProvider,
                 .Where(o => o != null && o.ControllerTypeInfo.AsType().IsAssignableTo(resourceServiceType) && !o.MethodInfo.GetCustomAttributes<IgnoreAttribute>().Any())
                 .ForEach(descriptor =>
                 {
-                    if (descriptor.ControllerTypeInfo.AsType().GetCustomAttribute<ViewAttribute>()?.Component is string component)
-                    {
-                        resourcePermission.Component = component;
-                    }
                     var number = $"{descriptor.ControllerName}.{descriptor.ActionName}";
-
                     list.Add(new Permission
                     {
                         ParentId = resourcePermission.Id,
