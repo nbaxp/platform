@@ -1,13 +1,17 @@
 using Autofac;
 using Autofac.Configuration;
 using Autofac.Extensions.DependencyInjection;
+using DynamicODataToSQL;
+using DynamicODataToSQL.Interfaces;
 using Hangfire;
 using Hangfire.MySql;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using MySqlConnector;
 using OrchardCore.Localization;
 using Serilog;
 using Serilog.Events;
+using SqlKata.Compilers;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Wta.Infrastructure.Startup;
@@ -125,6 +129,9 @@ public abstract class BaseStartup : IStartup
     /// <param name="builder"></param>
     public virtual void AddDbContext(WebApplicationBuilder builder)
     {
+        builder.Services.AddScoped<IEdmModelBuilder, EdmModelBuilder>();
+        builder.Services.AddSingleton<Compiler>(new MySqlCompiler { });
+        builder.Services.AddScoped<IODataToSqlConverter, ODataToSqlConverter>();
         //添加实体配置
         AppDomain.CurrentDomain.GetCustomerAssemblies()
             .SelectMany(o => o.GetTypes())
@@ -438,7 +445,35 @@ public abstract class BaseStartup : IStartup
 
     public virtual void AddScheduler(WebApplicationBuilder builder)
     {
-        var connectionString = builder.Configuration.GetConnectionString("hangfire");
+        var connectionString = builder.Configuration.GetConnectionString("hangfire")!;
+        var dbName = connectionString.Split(';').Where(o => !string.IsNullOrWhiteSpace(o))
+            .Select(o =>
+            {
+                var values = o.Split('=');
+                return new KeyValuePair<string, string>(values[0].Trim().ToLowerInvariant(), values[1].Trim());
+            })
+            .FirstOrDefault(o => o.Key == "database")
+            .Value;
+        var connectionStringBuilder = new MySqlConnectionStringBuilder(connectionString);
+        connectionStringBuilder.Database = string.Empty;
+        using var connection = new MySqlConnection(connectionStringBuilder.ConnectionString);
+        connection.Open();
+        using var cmd = connection.CreateCommand();
+        cmd.CommandText = "SHOW DATABASES;";
+        var dataReader = cmd.ExecuteReader();
+        var databaseNames = new List<string>();
+        while (dataReader.Read())
+        {
+            var tableName = dataReader.GetString(0);
+            databaseNames.Add(tableName);
+        }
+        dataReader.Close();
+        if (!databaseNames.Contains(dbName))
+        {
+            cmd.CommandText = $"CREATE DATABASE `{dbName}` CHARACTER SET utf8 COLLATE utf8_unicode_ci";
+            cmd.ExecuteNonQuery();
+        }
+        //
         var options = new MySqlStorageOptions
         {
             PrepareSchemaIfNecessary = true,
@@ -582,20 +617,17 @@ public abstract class BaseStartup : IStartup
             {
                 if (serviceProvider.GetRequiredService(dbContextType) is DbContext dbContext)
                 {
-                    if (dbContext.Database.EnsureCreated())
+                    var creator = dbContext.GetService<IRelationalDatabaseCreator>();
+                    if (!creator.Exists())
                     {
-                        var creator = dbContext.GetService<IRelationalDatabaseCreator>();
-                        if (!creator.Exists())
+                        var key = dbContext.Database.GetConnectionString()!;
+                        if (dict.TryGetValue(key, out var list))
                         {
-                            var key = dbContext.Database.GetConnectionString()!;
-                            if (dict.TryGetValue(key, out var list))
-                            {
-                                list.Add(dbContext);
-                            }
-                            else
-                            {
-                                dict.Add(key, [dbContext]);
-                            }
+                            list.Add(dbContext);
+                        }
+                        else
+                        {
+                            dict.Add(key, [dbContext]);
                         }
                     }
                 }
@@ -611,12 +643,18 @@ public abstract class BaseStartup : IStartup
                     creator.Create();
                 }
                 creator.CreateTables();
-                var dbSeedType = typeof(IDbSeeder<>).MakeGenericType(dbContext.GetType());
-                serviceProvider.GetServices(dbSeedType).ForEach(o => dbSeedType.GetMethod(nameof(IDbSeeder<DbContext>.Seed))?.Invoke(o, [dbContext]));
                 var sql = dbContext.Database.GenerateCreateScript();
                 var file = Path.Combine(Directory.GetCurrentDirectory(), "scripts", $"{dbContext.GetType().Name}.sql");
                 Directory.CreateDirectory(Path.GetDirectoryName(file)!);
                 File.WriteAllText(file, sql);
+            });
+            dict[key].ForEach(dbContext =>
+            {
+                var dbSeedType = typeof(IDbSeeder<>).MakeGenericType(dbContext.GetType());
+                serviceProvider.GetServices(dbSeedType).ForEach(o =>
+                {
+                    dbSeedType.GetMethod(nameof(IDbSeeder<DbContext>.Seed))?.Invoke(o, [dbContext]);
+                }); ;
             });
         });
     }

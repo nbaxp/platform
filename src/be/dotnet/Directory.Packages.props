@@ -20,13 +20,16 @@
     <PackageVersion Include="DistributedLock" Version="2.4.0" />
     <PackageVersion Include="DistributedLock.Redis" Version="1.0.3" />
     <PackageVersion Include="DynamicExpresso.Core" Version="2.16.1" />
-    <PackageVersion Include="EntityFramework.DynamicLinq" Version="1.3.13" />
+    <PackageVersion Include="DynamicODataToSQL" Version="1.0.8" />
+    <PackageVersion Include="EntityFramework.DynamicLinq" Version="1.3.14" />
+    <PackageVersion Include="Flurl" Version="4.0.0" />
     <PackageVersion Include="Hangfire.AspNetCore" Version="1.8.12" />
     <PackageVersion Include="Hangfire.MySqlStorage" Version="2.0.3" />
     <PackageVersion Include="Hardware.Info" Version="100.0.1.1" />
     <PackageVersion Include="MailKit" Version="4.5.0" />
     <PackageVersion Include="Mapster" Version="7.4.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
+    <PackageVersion Include="Microsoft.AspNetCore.OData" Version="8.2.5" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.4" />
     <PackageVersion Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="8.0.4" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
@@ -47,7 +50,7 @@
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
     <PackageVersion Include="nulastudio.NetCoreBeauty" Version="1.2.9.5" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.8.1" />
-    <PackageVersion Include="Oracle.EntityFrameworkCore" Version="8.21.140" />
+    <PackageVersion Include="Oracle.EntityFrameworkCore" Version="8.23.40" />
     <PackageVersion Include="OrchardCore.Localization.Core" Version="1.8.3" />
     <PackageVersion Include="Polly" Version="8.3.1" />
     <PackageVersion Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />

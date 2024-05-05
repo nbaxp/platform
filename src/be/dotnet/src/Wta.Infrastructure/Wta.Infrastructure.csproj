@@ -27,7 +27,9 @@
     <PackageReference Include="DistributedLock" />
     <PackageReference Include="DistributedLock.Redis" />
     <PackageReference Include="DynamicExpresso.Core" />
+    <PackageReference Include="DynamicODataToSQL" />
     <PackageReference Include="EntityFramework.DynamicLinq" />
+    <PackageReference Include="Flurl" />
     <PackageReference Include="Hangfire.AspNetCore" />
     <PackageReference Include="Hangfire.MySqlStorage" />
     <PackageReference Include="MailKit" />
