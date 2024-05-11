@@ -87,7 +87,7 @@ public class DefaultDbSeeder(IActionDescriptorCollectionProvider actionProvider,
         /// 添加菜单分组
         groups.ForEach(groupType =>
         {
-            var number = groupType.Name.ToSlugify()!;
+            var number = groupType.FullName?.TrimEnd("Attribute")!;
             if (!list.Any(o => o.Number == number))
             {
                 list.Add(new Permission
@@ -96,7 +96,7 @@ public class DefaultDbSeeder(IActionDescriptorCollectionProvider actionProvider,
                     Type = MenuType.Group,
                     Authorize = "Anonymous",
                     Name = groupType.GetDisplayName(),
-                    Number = groupType.FullName?.TrimEnd("Attribute")!,
+                    Number = number,
                     RouterPath = groupType.Name.TrimEnd("Attribute").ToSlugify()!,
                     Icon = groupType.GetCustomAttribute<IconAttribute>()?.Icon ?? "folder",
                     Order = groupType.GetCustomAttribute<DisplayAttribute>()?.GetOrder() ?? 0
@@ -106,14 +106,14 @@ public class DefaultDbSeeder(IActionDescriptorCollectionProvider actionProvider,
         /// 设置分组上级
         groups.ForEach(groupType =>
         {
-            var number = groupType.Name.ToSlugify()!;
+            var number = groupType.FullName?.TrimEnd("Attribute")!;
             var group = list.FirstOrDefault(o => o.Number == number);
             var current = group;
             groupType.GetBaseClasses().Where(o => !o.IsAbstract).ForEach(type =>
             {
                 if (current != null)
                 {
-                    var number = type.FullName!;
+                    var number = type.FullName?.TrimEnd("Attribute")!;
                     current.ParentId = list.FirstOrDefault(o => o.Number == number)?.Id;
                     current = list.FirstOrDefault(o => o.Number == number);
                 }
